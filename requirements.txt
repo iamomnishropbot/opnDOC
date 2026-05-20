@@ -1,0 +1,6 @@
+# opnDoc AI Integration Layer Core Dependencies
+# Add your chosen LLM SDK here (e.g., google-genai, openai, ollama)
+
+# Formatting and CLI testing utilities
+colorama>=0.4.6
+pytest>=8.0.0
