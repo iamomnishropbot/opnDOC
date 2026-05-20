@@ -1,10 +1,3 @@
-# opnDOC
-
-
-Ah, got it! That's my bad for copying the lesson rhythm over to your personal project workflow. `openDOC` is your own creation, meaning we can run it at whatever speed your creativity demands without any academic pacing limits!
-
-I've adjusted the `README.md` block below to strip out the Maestro references, giving you a completely clean, pure repository landing page for your Git layout.
-
 ---
 
 # openDOC
