@@ -1,6 +1,9 @@
 import os
 import json
+import gzip
+import tempfile
 from datetime import datetime
+from typing import Any, Callable
 
 class RealAILocalController:
     """
@@ -10,17 +13,71 @@ class RealAILocalController:
     def __init__(self, storage_path="realai_brain.json"):
         self.storage_path = storage_path
         self.memory = self.load_local_brain()
+
+    @staticmethod
+    def _default_memory():
+        return {"word_fix": {}, "history_log": [], "user_profile": {}}
+
+    @staticmethod
+    def _is_gzip_path(path):
+        return str(path).endswith(".gz")
+
+    def _normalize_memory(self, memory_obj):
+        if not isinstance(memory_obj, dict):
+            return self._default_memory()
+
+        normalized = self._default_memory()
+        if isinstance(memory_obj.get("word_fix"), dict):
+            normalized["word_fix"] = memory_obj["word_fix"]
+        if isinstance(memory_obj.get("history_log"), list):
+            normalized["history_log"] = memory_obj["history_log"]
+        if isinstance(memory_obj.get("user_profile"), dict):
+            normalized["user_profile"] = memory_obj["user_profile"]
+        return normalized
+
+    def _read_storage(self):
+        if self._is_gzip_path(self.storage_path):
+            with gzip.open(self.storage_path, "rt", encoding="utf-8") as f:
+                return f.read()
+        with open(self.storage_path, "r", encoding="utf-8") as f:
+            return f.read()
+
+    def _write_storage_atomically(self, content):
+        storage_dir = os.path.dirname(os.path.abspath(self.storage_path)) or "."
+        fd, tmp_path = tempfile.mkstemp(prefix=".realai_brain_", dir=storage_dir)
+        os.close(fd)
+        try:
+            if self._is_gzip_path(self.storage_path):
+                with gzip.open(tmp_path, "wt", encoding="utf-8") as f:
+                    f.write(content)
+            else:
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    f.write(content)
+            os.replace(tmp_path, self.storage_path)
+        finally:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
         
     def load_local_brain(self):
         if os.path.exists(self.storage_path):
-            with open(self.storage_path, 'r') as f:
-                return json.load(f)
+            try:
+                loaded = json.loads(self._read_storage())
+                return self._normalize_memory(loaded)
+            except (OSError, json.JSONDecodeError):
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                corrupt_backup = f"{self.storage_path}.corrupt.{timestamp}"
+                try:
+                    os.replace(self.storage_path, corrupt_backup)
+                    self.log_thought(f"Corrupted local brain moved to backup: {corrupt_backup}")
+                except OSError:
+                    self.log_thought("Corrupted local brain detected; backup move failed.")
         # Default state template if no local file exists
-        return {"word_fix": {}, "history_log": [], "user_profile": {}}
+        return self._default_memory()
 
     def save_local_brain(self):
-        with open(self.storage_path, 'w') as f:
-            json.dump(self.memory, f, indent=4)
+        serializable_memory = self._normalize_memory(self.memory)
+        content = json.dumps(serializable_memory, indent=4, ensure_ascii=False)
+        self._write_storage_atomically(content)
 
     def log_thought(self, message):
         """Replicates the classic RealAI thought_log visibility"""
@@ -37,6 +94,9 @@ class RealAILocalController:
         return processed_text
 
     def process_prompt(self, raw_prompt, generation_backend_callback):
+        if not callable(generation_backend_callback):
+            raise TypeError("generation_backend_callback must be callable")
+
         self.log_thought("Initializing local lexical validation pass...")
         clean_prompt = self.apply_word_fix(raw_prompt)
         
@@ -49,15 +109,34 @@ class RealAILocalController:
         
         self.log_thought("Dispatching execution payload to generation engine...")
         # Execute the modern generative generation step via the callback loop
-        response = generation_backend_callback(contextual_payload)
+        try:
+            response = generation_backend_callback(contextual_payload)
+        except Exception as exc:
+            self.log_thought(f"Generation backend failed: {exc}")
+            raise
         
         # Committing the entire exchange back to local disk space natively
         self.log_thought("Generation successful. Appending token metrics to local memory storage.")
+        response_for_storage = response
+        try:
+            json.dumps(response_for_storage)
+        except TypeError:
+            response_for_storage = str(response_for_storage)
         self.memory["history_log"].append({
             "user": clean_prompt, 
-            "response": response, 
+            "response": response_for_storage,
             "timestamp": datetime.now().isoformat()
         })
         self.save_local_brain()
         
         return response
+
+
+if __name__ == "__main__":
+    controller = RealAILocalController()
+
+    def demo_backend(payload: dict[str, Any]):
+        return f"quantum-stable-response::{payload['current_prompt']}"
+
+    prompt = os.environ.get("OPNDOC_PROMPT", "quantum stability check")
+    print(controller.process_prompt(prompt, demo_backend))
