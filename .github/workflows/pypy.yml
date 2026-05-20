@@ -25,10 +25,14 @@ jobs:
         # Idempotent by design: repeated runs overwrite `.env` from `.env.sample`.
         # For production usage, replace this with GitHub Secrets-backed values.
         run: |
-          test -f .env.sample
+          if [ ! -f .env.sample ]; then
+            echo "Missing .env.sample; cannot create CI .env template." >&2
+            exit 1
+          fi
           cp -f .env.sample .env
 
       - name: Run main script (realai_local_controller.py)
+        # This is a smoke-run guardrail for CI templates; adjust if runtime needs differ.
         timeout-minutes: 5
         # Extension notes:
         # - If tests are added, insert a dedicated step before this one
