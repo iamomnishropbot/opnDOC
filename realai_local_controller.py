@@ -19,6 +19,11 @@ class RealAILocalController:
         return {"word_fix": {}, "history_log": [], "user_profile": {}}
 
     @staticmethod
+    def _emit_thought(message):
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"\033[94m[thought_log - {timestamp}] {message}\033[0m")
+
+    @staticmethod
     def _is_gzip_path(path):
         return str(path).endswith(".gz")
 
@@ -68,9 +73,9 @@ class RealAILocalController:
                 corrupt_backup = f"{self.storage_path}.corrupt.{timestamp}"
                 try:
                     os.replace(self.storage_path, corrupt_backup)
-                    self.log_thought(f"Corrupted local brain moved to backup: {corrupt_backup}")
+                    self._emit_thought(f"Corrupted local brain moved to backup: {corrupt_backup}")
                 except OSError:
-                    self.log_thought("Corrupted local brain detected; backup move failed.")
+                    self._emit_thought("Corrupted local brain detected; backup move failed.")
         # Default state template if no local file exists
         return self._default_memory()
 
@@ -81,8 +86,7 @@ class RealAILocalController:
 
     def log_thought(self, message):
         """Replicates the classic RealAI thought_log visibility"""
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"\033[94m[thought_log - {timestamp}] {message}\033[0m")
+        self._emit_thought(message)
 
     def apply_word_fix(self, raw_input):
         """Locally intercepts text to apply custom user vocabulary rules"""
