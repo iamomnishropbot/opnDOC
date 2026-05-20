@@ -70,7 +70,7 @@ python opendoc.py --format APA7 --input "draft_notes.txt" --output "academic_man
 
 ### Managing Local Lexical Fixes
 
-Train your local engine profile directly from the terminal to override backend token parsing rules:
+Use the companion dictionary utility (`opendoc_cli.py`) to train your local engine profile and override backend token parsing rules:
 
 ```bash
 # Add a persistent string substitution rule
