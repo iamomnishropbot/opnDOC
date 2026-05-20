@@ -1,8 +1,4 @@
----
-
-
-
-> **openDOC** is a high-speed, scriptable command-line interface (CLI) that enables native interaction with an agentic AI backend directly from your terminal. Built for workflows where browser-based GUIs cause unnecessary friction, openDOC processes structured arguments, tracks internal states natively, and outputs perfectly compiled technical and narrative documentation files.
+> **opnDOC** is a high-speed, scriptable command-line interface (CLI) that enables native interaction with an agentic AI backend directly from your terminal. Built for workflows where browser-based GUIs cause unnecessary friction, openDOC processes structured arguments, tracks internal states natively, and outputs perfectly compiled technical and narrative documentation files.
 
 ---
 
