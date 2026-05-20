@@ -14,7 +14,7 @@ jobs:
       - name: Set up Python interpreter (PyPy3.10)
         uses: actions/setup-python@v5
         with:
-          python-version: pypy3.10
+          python-version: 'pypy3.10'
 
       - name: Install project dependencies from requirements.txt
         run: |
@@ -27,6 +27,7 @@ jobs:
         run: cp -f .env.sample .env
 
       - name: Run main script (realai_local_controller.py)
+        timeout-minutes: 5
         # Extension notes:
         # - If tests are added, insert a dedicated step before this one
         #   (e.g., `python -m pytest` or `python -m unittest discover`).
