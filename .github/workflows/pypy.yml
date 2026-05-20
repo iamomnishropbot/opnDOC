@@ -24,7 +24,9 @@ jobs:
       - name: Create CI environment file from template
         # Idempotent by design: repeated runs overwrite `.env` from `.env.sample`.
         # For production usage, replace this with GitHub Secrets-backed values.
-        run: cp -f .env.sample .env
+        run: |
+          test -f .env.sample
+          cp -f .env.sample .env
 
       - name: Run main script (realai_local_controller.py)
         timeout-minutes: 5
