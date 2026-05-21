@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -93,6 +95,9 @@ fun WaveScreen(
             ) {
                 uiState.selectedColors.forEachIndexed { index, color ->
                     Button(
+                        modifier = Modifier.semantics {
+                            contentDescription = "Pick Color ${index + 1} button"
+                        },
                         onClick = { pickerIndex = index },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = color,

@@ -21,6 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 /**
@@ -59,6 +63,14 @@ fun WaveColorPickerDialog(
                                     .size(48.dp)
                                     .clip(CircleShape)
                                     .background(color)
+                                    .semantics {
+                                        role = Role.Button
+                                        contentDescription = buildString {
+                                            append("Select color ")
+                                            append(color.toHexString())
+                                            if (isSelected) append(", currently selected")
+                                        }
+                                    }
                                     .border(
                                         width = if (isSelected) 3.dp else 1.dp,
                                         color = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.White.copy(alpha = 0.6f),
@@ -79,4 +91,11 @@ fun WaveColorPickerDialog(
         },
         modifier = Modifier.padding(horizontal = 8.dp)
     )
+}
+
+private fun Color.toHexString(): String {
+    val redHex = (red * 255).toInt().coerceIn(0, 255).toString(16).padStart(2, '0')
+    val greenHex = (green * 255).toInt().coerceIn(0, 255).toString(16).padStart(2, '0')
+    val blueHex = (blue * 255).toInt().coerceIn(0, 255).toString(16).padStart(2, '0')
+    return "#$redHex$greenHex$blueHex".uppercase()
 }
