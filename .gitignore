@@ -1,0 +1,5 @@
+# Rust build artifacts
+rust-backend/target/
+
+# Rust lockfile for this library crate
+rust-backend/Cargo.lock
