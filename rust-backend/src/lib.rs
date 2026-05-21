@@ -23,12 +23,15 @@ impl Default for BrainData {
 
 #[no_mangle]
 pub extern "C" fn Java_com_iamomnishropbot_opndoc_BrainDataBridge_parseFromJson(
-    env: JNIEnv,
+    mut env: JNIEnv,
     _class: JClass,
     json_input: JString,
 ) -> jstring {
-    let json: String = env.get_string(json_input).expect("Couldn't get string!").into();
+    let json: String = env
+        .get_string(&json_input)
+        .expect("Couldn't get string!")
+        .into();
     let brain: BrainData = serde_json::from_str(&json).unwrap_or_default();
     let result_json = serde_json::to_string(&brain).expect("Serialization failed!");
-    env.new_string(result_json).unwrap().into_inner()
+    env.new_string(result_json).unwrap().into_raw()
 }
