@@ -1,4 +1,16 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
 
-pip install -r requirements.txt
-# OR
-pip install .
+[project]
+name = "opndoc-local-tools"
+version = "0.1.0"
+description = "Local Python utilities for opnDOC memory and controller flows."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "colorama>=0.4.6",
+]
+
+[tool.setuptools]
+py-modules = ["memory_backends", "realai_local_controller"]
