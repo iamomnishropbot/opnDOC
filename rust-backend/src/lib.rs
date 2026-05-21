@@ -3,6 +3,7 @@ use jni::sys::jstring;
 use jni::JNIEnv;
 use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
+use std::ptr::null_mut;
 
 #[derive(Serialize, Deserialize)]
 pub struct BrainData {
@@ -27,11 +28,36 @@ pub extern "C" fn Java_com_iamomnishropbot_opndoc_BrainDataBridge_parseFromJson(
     _class: JClass,
     json_input: JString,
 ) -> jstring {
-    let json: String = env
-        .get_string(&json_input)
-        .expect("Couldn't get string!")
-        .into();
+    let json: String = match env.get_string(&json_input) {
+        Ok(value) => value.into(),
+        Err(error) => {
+            let _ = env.throw_new(
+                "java/lang/IllegalArgumentException",
+                format!("Failed to read input JSON string: {error}"),
+            );
+            return null_mut();
+        }
+    };
     let brain: BrainData = serde_json::from_str(&json).unwrap_or_default();
-    let result_json = serde_json::to_string(&brain).expect("Serialization failed!");
-    env.new_string(result_json).unwrap().into_raw()
+    let result_json = match serde_json::to_string(&brain) {
+        Ok(value) => value,
+        Err(error) => {
+            let _ = env.throw_new(
+                "java/lang/RuntimeException",
+                format!("Failed to serialize normalized brain data: {error}"),
+            );
+            return null_mut();
+        }
+    };
+
+    match env.new_string(result_json) {
+        Ok(value) => value.into_raw(),
+        Err(error) => {
+            let _ = env.throw_new(
+                "java/lang/RuntimeException",
+                format!("Failed to allocate JNI output string: {error}"),
+            );
+            null_mut()
+        }
+    }
 }

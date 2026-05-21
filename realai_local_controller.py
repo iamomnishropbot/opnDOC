@@ -4,6 +4,9 @@ from datetime import datetime
 from copy import deepcopy
 from memory_backends import normalize_brain_data, DEFAULT_BRAIN_DATA
 
+MAX_CONCISE_WORDS = 35
+
+
 class RealAILocalController:
     """
     Fuses local pattern matching, stateful memory logs, and 
@@ -101,8 +104,8 @@ class RealAILocalController:
         profile = self.memory.get("user_profile", {})
         styled_response = str(response)
 
-        if profile.get("verbosity_style") == "concise" and len(styled_response.split()) > 35:
-            styled_response = " ".join(styled_response.split()[:35]) + "..."
+        if profile.get("verbosity_style") == "concise" and len(styled_response.split()) > MAX_CONCISE_WORDS:
+            styled_response = " ".join(styled_response.split()[:MAX_CONCISE_WORDS]) + "..."
 
         if profile.get("casing_style") == "lowercase":
             styled_response = styled_response.lower()
