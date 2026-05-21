@@ -35,14 +35,19 @@ def _history_entry_to_string(entry):
     if isinstance(entry, str):
         return entry
     if isinstance(entry, dict):
+        timestamp = str(entry.get("timestamp", "")).strip()
         user = str(entry.get("user", "")).strip()
         response = str(entry.get("response", "")).strip()
+        prefix = f"[{timestamp}] " if timestamp else ""
         if user and response:
-            return f"user={user} | response={response}"
+            return f"{prefix}user={user} | response={response}"
         if user:
-            return f"user={user}"
+            return f"{prefix}user={user}"
         if response:
-            return f"response={response}"
+            return f"{prefix}response={response}"
+        if timestamp:
+            return f"[{timestamp}]"
+        return "history_entry"
     return str(entry)
 
 
