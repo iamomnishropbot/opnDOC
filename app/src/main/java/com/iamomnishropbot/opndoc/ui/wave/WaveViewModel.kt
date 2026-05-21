@@ -19,7 +19,7 @@ class WaveViewModel : ViewModel() {
 
     /** Updates one of the three palette entries. Any Compose [Color] is accepted. */
     fun updateColor(index: Int, color: Color) {
-        require(index in 0..2) { "Wave color index must be 0..2, but was $index" }
+        require(index in 0..2) { "Wave color index must be in range 0..2 (inclusive), but was $index" }
         _uiState.update { state ->
             val mutable = state.selectedColors.toMutableList()
             mutable[index] = color

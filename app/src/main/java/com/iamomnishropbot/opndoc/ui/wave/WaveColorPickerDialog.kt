@@ -94,8 +94,11 @@ fun WaveColorPickerDialog(
 }
 
 private fun Color.toHexString(): String {
-    val redHex = (red * 255).toInt().coerceIn(0, 255).toString(16).padStart(2, '0')
-    val greenHex = (green * 255).toInt().coerceIn(0, 255).toString(16).padStart(2, '0')
-    val blueHex = (blue * 255).toInt().coerceIn(0, 255).toString(16).padStart(2, '0')
+    val redHex = red.channelHex()
+    val greenHex = green.channelHex()
+    val blueHex = blue.channelHex()
     return "#$redHex$greenHex$blueHex".uppercase()
 }
+
+private fun Float.channelHex(): String =
+    (this * 255).toInt().coerceIn(0, 255).toString(16).padStart(2, '0')

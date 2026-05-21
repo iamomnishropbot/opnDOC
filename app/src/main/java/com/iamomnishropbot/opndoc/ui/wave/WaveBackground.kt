@@ -86,13 +86,14 @@ fun WaveBackground(
             val baseline = height * (BASELINE_START_RATIO + (layer * BASELINE_STEP_RATIO))
             val wavelength = width / (BASE_WAVELENGTH_DIVISOR + (layer * WAVELENGTH_STEP))
             val alpha = BASE_ALPHA + (layer * ALPHA_STEP)
+            val twoPi = 2f * PI
 
             val path = Path().apply {
                 moveTo(0f, height)
                 lineTo(0f, baseline)
                 var x = 0f
                 while (x <= width) {
-                    val angle = ((x / wavelength) * 2f * PI + phase + layer).toDouble()
+                    val angle = ((x / wavelength) * twoPi + phase + layer).toDouble()
                     val y = baseline + amplitude * sin(angle).toFloat()
                     lineTo(x, y)
                     x += 6f
