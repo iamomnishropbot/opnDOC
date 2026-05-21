@@ -6,3 +6,9 @@ rust-backend/Cargo.lock
 
 # Local Gradle cache
 .gradle/
+
+# Python build/test artifacts
+__pycache__/
+*.py[cod]
+build/
+*.egg-info/
