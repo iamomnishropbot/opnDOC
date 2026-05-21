@@ -17,13 +17,28 @@ import androidx.compose.ui.graphics.Path
 import kotlin.math.PI
 import kotlin.math.sin
 
+/** Base vertical height of the closest wave crest/trough. */
 private const val BASE_AMPLITUDE = 24f
+
+/** Extra height added for deeper wave layers to increase depth feeling. */
 private const val AMPLITUDE_STEP = 20f
+
+/** Starting vertical anchor ratio for the first wave layer. */
 private const val BASELINE_START_RATIO = 0.42f
+
+/** Vertical spacing ratio between wave layers. */
 private const val BASELINE_STEP_RATIO = 0.14f
+
+/** Initial width divisor controlling how stretched the first wave is. */
 private const val BASE_WAVELENGTH_DIVISOR = 1.25f
+
+/** Per-layer divisor increase to vary wave frequency across layers. */
 private const val WAVELENGTH_STEP = 0.15f
+
+/** Base transparency for the first wave layer. */
 private const val BASE_ALPHA = 0.34f
+
+/** Additional transparency per layer to keep back layers visible. */
 private const val ALPHA_STEP = 0.11f
 
 /**

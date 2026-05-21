@@ -159,7 +159,7 @@ private fun HarmonizedMaterialTestButton(
                 )
             ).apply {
                 text = "Test"
-                cornerRadius = 28
+                cornerRadius = (28 * ctx.resources.displayMetrics.density).toInt()
                 setOnClickListener { onClick() }
             }
         },
