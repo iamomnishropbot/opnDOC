@@ -17,6 +17,15 @@ import androidx.compose.ui.graphics.Path
 import kotlin.math.PI
 import kotlin.math.sin
 
+private const val BASE_AMPLITUDE = 24f
+private const val AMPLITUDE_STEP = 20f
+private const val BASELINE_START_RATIO = 0.42f
+private const val BASELINE_STEP_RATIO = 0.14f
+private const val BASE_WAVELENGTH_DIVISOR = 1.25f
+private const val WAVELENGTH_STEP = 0.15f
+private const val BASE_ALPHA = 0.34f
+private const val ALPHA_STEP = 0.11f
+
 /**
  * Animated Gemini-style background.
  *
@@ -28,9 +37,7 @@ fun WaveBackground(
     colors: List<Color>,
     modifier: Modifier = Modifier
 ) {
-    val safeColors = if (colors.size >= 3) colors else listOf(
-        Color(0xFF6C63FF), Color(0xFF00C2FF), Color(0xFFFF5EAE)
-    )
+    val safeColors = if (colors.size >= 3) colors else DefaultWaveColors
 
     val transition = rememberInfiniteTransition(label = "wave-transition")
     val phase by transition.animateFloat(
@@ -60,10 +67,10 @@ fun WaveBackground(
         )
 
         repeat(3) { layer ->
-            val amplitude = (24f + (layer * 20f))
-            val baseline = height * (0.42f + (layer * 0.14f))
-            val wavelength = width / (1.25f + (layer * 0.15f))
-            val alpha = 0.34f + (layer * 0.11f)
+            val amplitude = BASE_AMPLITUDE + (layer * AMPLITUDE_STEP)
+            val baseline = height * (BASELINE_START_RATIO + (layer * BASELINE_STEP_RATIO))
+            val wavelength = width / (BASE_WAVELENGTH_DIVISOR + (layer * WAVELENGTH_STEP))
+            val alpha = BASE_ALPHA + (layer * ALPHA_STEP)
 
             val path = Path().apply {
                 moveTo(0f, height)

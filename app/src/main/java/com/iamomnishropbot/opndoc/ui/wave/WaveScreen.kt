@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -145,7 +144,6 @@ private fun HarmonizedMaterialTestButton(
     colors: List<Color>,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     val harmonized = blend(colors)
     val textColor = harmonized.contrastText()
 
@@ -154,7 +152,12 @@ private fun HarmonizedMaterialTestButton(
             .fillMaxWidth(0.62f)
             .height(52.dp),
         factory = { ctx ->
-            MaterialButton(ContextThemeWrapper(ctx, android.R.style.Theme_DeviceDefault)).apply {
+            MaterialButton(
+                ContextThemeWrapper(
+                    ctx,
+                    com.google.android.material.R.style.Theme_MaterialComponents_DayNight
+                )
+            ).apply {
                 text = "Test"
                 cornerRadius = 28
                 setOnClickListener { onClick() }
@@ -168,7 +171,7 @@ private fun HarmonizedMaterialTestButton(
 }
 
 private fun blend(colors: List<Color>): Color {
-    val safe = if (colors.size >= 3) colors else listOf(Color(0xFF6C63FF), Color(0xFF00C2FF), Color(0xFFFF5EAE))
+    val safe = if (colors.size >= 3) colors else DefaultWaveColors
     return Color(
         red = (safe[0].red + safe[1].red + safe[2].red) / 3f,
         green = (safe[0].green + safe[1].green + safe[2].green) / 3f,

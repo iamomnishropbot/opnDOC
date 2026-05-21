@@ -17,6 +17,7 @@ class WaveViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(WaveUiState())
     val uiState: StateFlow<WaveUiState> = _uiState.asStateFlow()
 
+    /** Updates one of the three palette entries. Any Compose [Color] is accepted. */
     fun updateColor(index: Int, color: Color) {
         _uiState.update { state ->
             val mutable = state.selectedColors.toMutableList()
